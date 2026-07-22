@@ -18,7 +18,6 @@
     --bg:#0C1424;
     --grid:rgba(46,230,214,.06);
     --panel:#111B31;
-    --panel-2:#16224014;
     --card:#152039;
     --card-2:#1B2947;
     --ink:#E8F0FF;
@@ -28,7 +27,6 @@
     --cyan-dim:#1A8F86;
     --orange:#FF8A2B;
     --orange-deep:#D96A10;
-    --magenta:#FF4FA3;
     --ok:#3BE07C;   --ok-soft:rgba(59,224,124,.14);
     --low:#FFC531;  --low-soft:rgba(255,197,49,.14);
     --out:#FF5A5A;  --out-soft:rgba(255,90,90,.14);
@@ -58,7 +56,6 @@
     padding-bottom:16px;
     position:relative;overflow:hidden;
   }
-  /* scanlines */
   .panel::after{
     content:"";position:absolute;inset:0;pointer-events:none;
     background:repeating-linear-gradient(180deg, rgba(255,255,255,.025) 0 1px, transparent 1px 3px);
@@ -120,7 +117,7 @@
   .stat.warn b{color:var(--low);}
   .stat.bad b{color:var(--out);}
 
-  /* ---------- Search & filters ---------- */
+  /* ---------- Search ---------- */
   .toolbar{padding-top:16px;}
   .search-row{position:relative;}
   .search-row svg{
@@ -134,17 +131,59 @@
   }
   .search-row input::placeholder{color:#516080;}
   .search-row input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px rgba(46,230,214,.18), 0 0 14px rgba(46,230,214,.25);}
-  .chips{display:flex;gap:7px;overflow-x:auto;padding:12px 0 4px;scrollbar-width:none;}
-  .chips::-webkit-scrollbar{display:none;}
-  .chip{
-    flex:0 0 auto;border:1.5px solid var(--line);background:var(--card);color:var(--ink-soft);
-    border-radius:8px;padding:9px 14px;font-family:var(--pix);font-size:7.5px;cursor:pointer;
-    text-transform:uppercase;transition:transform .1s;
-  }
-  .chip:active{transform:scale(.93);}
-  .chip.active{background:var(--cyan);border-color:var(--cyan);color:#0C1424;}
 
-  /* ---------- Item cards: data entries ---------- */
+  /* ---------- Sector (category) grid ---------- */
+  .section-label{
+    font-family:var(--pix);font-size:7.5px;color:var(--ink-soft);text-transform:uppercase;
+    padding:16px 2px 10px;letter-spacing:.06em;
+  }
+  .cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .cat-card{
+    background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);
+    padding:13px 13px 12px;cursor:pointer;position:relative;overflow:hidden;text-align:left;
+    color:var(--ink);font-family:var(--body);
+    animation:boot .28s ease both;transition:transform .1s;
+  }
+  .cat-card:active{transform:scale(.96);border-color:var(--cyan);}
+  .cat-card .folder{width:26px;height:26px;image-rendering:pixelated;margin-bottom:9px;display:block;}
+  .cat-name{
+    font-size:14.5px;font-weight:700;line-height:1.25;word-break:break-word;
+  }
+  .cat-count{
+    font-family:var(--pix);font-size:6.5px;color:var(--ink-soft);margin-top:6px;text-transform:uppercase;
+  }
+  .cat-status{display:flex;gap:5px;margin-top:8px;min-height:16px;flex-wrap:wrap;}
+  .mini-badge{
+    font-family:var(--pix);font-size:5.5px;border-radius:4px;padding:4px 6px;text-transform:uppercase;
+    display:inline-flex;align-items:center;gap:4px;
+  }
+  .mini-badge i{width:5px;height:5px;border-radius:1px;display:inline-block;}
+  .mini-badge.ok{background:var(--ok-soft);color:var(--ok);}   .mini-badge.ok i{background:var(--ok);}
+  .mini-badge.low{background:var(--low-soft);color:var(--low);} .mini-badge.low i{background:var(--low);animation:blink 1s steps(2) infinite;}
+  .mini-badge.out{background:var(--out-soft);color:var(--out);} .mini-badge.out i{background:var(--out);animation:blink .5s steps(2) infinite;}
+  @media (prefers-reduced-motion:reduce){.mini-badge i{animation:none;}}
+  .cat-card .arrow{
+    position:absolute;right:11px;top:13px;font-family:var(--pix);font-size:9px;color:var(--cyan);
+  }
+
+  /* ---------- List view header (back bar) ---------- */
+  .listbar{
+    display:none;align-items:center;gap:10px;padding:16px 0 4px;
+  }
+  .listbar.show{display:flex;}
+  .back-btn{
+    height:42px;padding:0 14px;border:1.5px solid var(--line);border-radius:10px;
+    background:var(--card);color:var(--cyan);font-family:var(--pix);font-size:8px;
+    cursor:pointer;text-transform:uppercase;display:flex;align-items:center;gap:7px;flex-shrink:0;
+  }
+  .back-btn:active{border-color:var(--cyan);}
+  .listbar-title{
+    font-family:var(--pix);font-size:9px;color:#fff;text-transform:uppercase;line-height:1.6;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;
+  }
+  .listbar-title small{display:block;font-size:6px;color:var(--ink-soft);}
+
+  /* ---------- Item cards ---------- */
   .list{padding-top:12px;display:flex;flex-direction:column;gap:11px;}
   .item{
     background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);
@@ -152,7 +191,7 @@
     animation:boot .28s ease both;
   }
   @keyframes boot{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
-  @media (prefers-reduced-motion:reduce){.item{animation:none;}}
+  @media (prefers-reduced-motion:reduce){.item,.cat-card{animation:none;}}
   .item::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--ok);box-shadow:0 0 10px var(--ok);}
   .item.low::before{background:var(--low);box-shadow:0 0 10px var(--low);}
   .item.out::before{background:var(--out);box-shadow:0 0 10px var(--out);}
@@ -282,7 +321,7 @@
   <div class="flare"></div>
   <div class="wrap">
     <div class="topline">
-      <span>DINO-VICE v2.0</span>
+      <span>DINO-VICE v2.1</span>
       <span class="blink">● ONLINE</span>
     </div>
     <div class="brand">
@@ -310,13 +349,27 @@
   <div class="toolbar">
     <div class="search-row">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-      <input type="search" id="search" placeholder="Scan for an item…" autocomplete="off">
+      <input type="search" id="search" placeholder="Scan all items…" autocomplete="off">
     </div>
-    <div class="chips" id="chips"></div>
   </div>
 
   <div class="loading" id="loading">Connecting to<br>the digital shelf…</div>
-  <div class="list" id="list" hidden></div>
+
+  <!-- HOME: sector grid -->
+  <div id="homeView" hidden>
+    <div class="section-label" id="sectorLabel">&gt; Select sector</div>
+    <div class="cat-grid" id="catGrid"></div>
+  </div>
+
+  <!-- LIST: items in a sector / search results -->
+  <div id="listView" hidden>
+    <div class="listbar" id="listbar">
+      <button class="back-btn" id="backBtn">◀ Back</button>
+      <div class="listbar-title" id="listTitle">SECTOR<small id="listSub"></small></div>
+    </div>
+    <div class="list" id="list"></div>
+  </div>
+
   <div class="empty" id="empty" hidden>
     <svg id="eggSprite" viewBox="0 0 16 16" shape-rendering="crispEdges"></svg>
     <p><b>No data found.</b><br>Add an item to hatch<br>Aladdar's collection.</p>
@@ -376,8 +429,10 @@
 <script>
 (function(){
   var STORAGE_KEY = 'inventory-data';
+  var UNSORTED = '__unsorted__';
   var items = [];
-  var filterCat = 'All';
+  var view = 'home';          /* 'home' | 'list' */
+  var currentCat = null;      /* category name, UNSORTED, or null on home */
   var searchTerm = '';
   var editingId = null;
   var storageOk = true;
@@ -389,12 +444,12 @@
   var ICONS = {
     pin:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>',
     edit:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>',
-    del:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>'
+    del:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>',
+    folder:'<svg class="folder" viewBox="0 0 16 16" shape-rendering="crispEdges"><rect x="1" y="4" width="6" height="2" fill="#2EE6D6"/><rect x="1" y="6" width="14" height="8" fill="#1A8F86"/><rect x="2" y="7" width="12" height="6" fill="#2EE6D6"/><rect x="3" y="8" width="10" height="4" fill="#0A1120"/><rect x="5" y="9" width="2" height="2" fill="#FF8A2B"/><rect x="9" y="9" width="2" height="2" fill="#FF8A2B"/></svg>'
   };
 
   /* ================= PIXEL SPRITE ENGINE ================= */
-  var PAL = {O:'#FF8A2B', D:'#D96A10', C:'#2EE6D6', B:'#FFD9A8', W:'#FFFFFF', K:'#141126', M:'#FF4FA3', G:'#3BE07C'};
-  /* Aladdar the pixel dino — frame 1 (standing) */
+  var PAL = {O:'#FF8A2B', D:'#D96A10', C:'#2EE6D6', B:'#FFD9A8', W:'#FFFFFF', K:'#141126', M:'#FF4FA3'};
   var DINO_F1 = [
     '................',
     '......CC........',
@@ -413,7 +468,6 @@
     '....OO..OO......',
     '...DD...DD......'
   ];
-  /* frame 2 (hop) */
   var DINO_F2 = [
     '......CC........',
     '.....COOOO......',
@@ -432,24 +486,11 @@
     '..DD......DD....',
     '................'
   ];
-  /* egg sprite for empty state */
   var EGG = [
-    '................',
-    '................',
-    '......WWWW......',
-    '.....WWWWWW.....',
-    '....WWWWWWWW....',
-    '....WWMMWWWW....',
-    '...WWWWMMWWWW...',
-    '...WWWWWWWWWW...',
-    '...WMMWWWWMMW...',
-    '...WWMMWWMMWW...',
-    '...WWWWWWWWWW...',
-    '....WWWWWWWW....',
-    '....CCCCCCCC....',
-    '.....CCCCCC.....',
-    '................',
-    '................'
+    '................','................','......WWWW......','.....WWWWWW.....',
+    '....WWWWWWWW....','....WWMMWWWW....','...WWWWMMWWWW...','...WWWWWWWWWW...',
+    '...WMMWWWWMMW...','...WWMMWWMMWW...','...WWWWWWWWWW...','....WWWWWWWW....',
+    '....CCCCCCCC....','.....CCCCCC.....','................','................'
   ];
 
   function drawSprite(svgId, map){
@@ -511,7 +552,6 @@
       storageOk = false;
     }
     $('loading').hidden = true;
-    $('list').hidden = false;
     updateSaveState(storageOk ? '' : 'NO SAVE');
     lastLevel = levelInfo(items.length).idx;
     render();
@@ -546,9 +586,10 @@
     if(it.qty <= it.min) return 'low';
     return 'ok';
   }
+  function catOf(it){ return (it.cat && it.cat.trim()) ? it.cat.trim() : UNSORTED; }
   function categories(){
     var set = {};
-    items.forEach(function(it){ if(it.cat) set[it.cat] = true; });
+    items.forEach(function(it){ if(it.cat && it.cat.trim()) set[it.cat.trim()] = true; });
     return Object.keys(set).sort();
   }
   function toast(msg){
@@ -559,7 +600,7 @@
     t._h = setTimeout(function(){ t.classList.remove('show'); }, 2100);
   }
 
-  /* ================= ALADDAR'S STATUS MESSAGES ================= */
+  /* ================= STATUS MESSAGES ================= */
   function updateBubble(low, out){
     var b = $('bubble');
     b.classList.remove('alert','danger');
@@ -576,14 +617,53 @@
     }
   }
 
+  /* ================= VIEW SWITCHING ================= */
+  function goHome(){
+    view = 'home';
+    currentCat = null;
+    $('search').value = '';
+    searchTerm = '';
+    $('search').placeholder = 'Scan all items…';
+    render();
+    window.scrollTo(0,0);
+  }
+  function openCat(cat){
+    view = 'list';
+    currentCat = cat;
+    $('search').value = '';
+    searchTerm = '';
+    $('search').placeholder = 'Scan this sector…';
+    render();
+    window.scrollTo(0,0);
+  }
+
   /* ================= RENDERING ================= */
   function render(){
-    renderChips();
     renderStats();
-    renderList();
     renderDatalist();
     updateLevel();
     $('resetBtn').hidden = items.length === 0;
+    $('empty').hidden = !(items.length === 0);
+
+    var searching = searchTerm.trim() !== '';
+
+    if(items.length === 0){
+      $('homeView').hidden = true;
+      $('listView').hidden = true;
+      return;
+    }
+
+    if(view === 'home' && !searching){
+      $('homeView').hidden = false;
+      $('listView').hidden = true;
+      renderCatGrid();
+    } else {
+      /* list view, or searching from home */
+      $('homeView').hidden = true;
+      $('listView').hidden = false;
+      renderListbar(searching);
+      renderList(searching);
+    }
   }
 
   function renderStats(){
@@ -601,38 +681,79 @@
     updateBubble(low, out);
   }
 
-  function renderChips(){
-    var cats = ['All'].concat(categories());
-    if(cats.indexOf(filterCat) === -1) filterCat = 'All';
-    var html = '';
-    cats.forEach(function(c){
-      html += '<button class="chip' + (c === filterCat ? ' active' : '') + '" data-cat="' + esc(c) + '">' + esc(c) + '</button>';
-    });
-    $('chips').innerHTML = html;
-  }
-
   function renderDatalist(){
     $('catList').innerHTML = categories().map(function(c){
       return '<option value="' + esc(c) + '"></option>';
     }).join('');
   }
 
-  function visibleItems(){
+  function catSummary(cat){
+    var count = 0, low = 0, out = 0;
+    items.forEach(function(it){
+      if(catOf(it) !== cat) return;
+      count++;
+      var s = stockState(it);
+      if(s === 'low') low++;
+      if(s === 'out') out++;
+    });
+    return {count:count, low:low, out:out};
+  }
+
+  function renderCatGrid(){
+    var cats = categories();
+    var hasUnsorted = items.some(function(it){ return catOf(it) === UNSORTED; });
+    if(hasUnsorted) cats = cats.concat([UNSORTED]);
+    var html = '';
+    cats.forEach(function(c, idx){
+      var s = catSummary(c);
+      var label = c === UNSORTED ? 'Unsorted' : c;
+      var badges = '';
+      if(s.out > 0) badges += '<span class="mini-badge out"><i></i>' + s.out + ' OUT</span>';
+      if(s.low > 0) badges += '<span class="mini-badge low"><i></i>' + s.low + ' LOW</span>';
+      if(s.out === 0 && s.low === 0) badges += '<span class="mini-badge ok"><i></i>OK</span>';
+      html +=
+      '<button class="cat-card" data-cat="' + esc(c) + '" style="animation-delay:' + Math.min(idx*40,280) + 'ms">' +
+        '<span class="arrow">▶</span>' +
+        ICONS.folder +
+        '<div class="cat-name">' + esc(label) + '</div>' +
+        '<div class="cat-count">' + s.count + ' ITEM' + (s.count===1?'':'S') + '</div>' +
+        '<div class="cat-status">' + badges + '</div>' +
+      '</button>';
+    });
+    $('catGrid').innerHTML = html;
+  }
+
+  function renderListbar(searching){
+    if(searching){
+      $('listTitle').innerHTML = 'SEARCH RESULTS<small id="listSub"></small>';
+      $('backBtn').style.display = view === 'list' || searchTerm ? 'flex' : 'none';
+    } else {
+      var label = currentCat === UNSORTED ? 'UNSORTED' : currentCat;
+      $('listTitle').innerHTML = esc(label) + '<small id="listSub"></small>';
+    }
+    $('listbar').classList.add('show');
+  }
+
+  function visibleItems(searching){
     var q = searchTerm.trim().toLowerCase();
     return items.filter(function(it){
-      if(filterCat !== 'All' && it.cat !== filterCat) return false;
-      if(!q) return true;
-      return (it.name + ' ' + (it.loc||'') + ' ' + (it.cat||'') + ' ' + (it.note||'')).toLowerCase().indexOf(q) !== -1;
+      if(!searching && view === 'list' && catOf(it) !== currentCat) return false;
+      if(searching && view === 'list' && catOf(it) !== currentCat) return false;
+      if(q){
+        var hay = (it.name + ' ' + (it.loc||'') + ' ' + (it.cat||'') + ' ' + (it.note||'')).toLowerCase();
+        if(hay.indexOf(q) === -1) return false;
+      }
+      return true;
     });
   }
 
-  function renderList(){
-    var vis = visibleItems();
+  function renderList(searching){
+    var vis = visibleItems(searching);
     var list = $('list');
-    $('empty').hidden = !(items.length === 0);
+    var sub = document.getElementById('listSub');
+    if(sub) sub.textContent = vis.length + ' ITEM' + (vis.length===1?'':'S');
     if(vis.length === 0){
-      list.innerHTML = items.length === 0 ? '' :
-        '<div class="empty"><p><b>Scan complete.</b><br>No matching data found.</p></div>';
+      list.innerHTML = '<div class="empty"><p><b>Scan complete.</b><br>No matching data<br>in this sector.</p></div>';
       return;
     }
     var order = {out:0, low:1, ok:2};
@@ -641,6 +762,7 @@
       return d !== 0 ? d : a.name.localeCompare(b.name);
     });
     var html = '';
+    var showCatTag = searching || view !== 'list';
     vis.forEach(function(it, idx){
       var s = stockState(it);
       var badge = s === 'out' ? 'OUT' : s === 'low' ? 'LOW' : 'OK';
@@ -650,7 +772,7 @@
           '<div>' +
             '<div class="item-name">' + esc(it.name) + '</div>' +
             '<div class="item-meta">' +
-              (it.cat ? '<span class="meta-tag">' + esc(it.cat) + '</span>' : '') +
+              (showCatTag && it.cat ? '<span class="meta-tag">' + esc(it.cat) + '</span>' : '') +
               (it.loc ? '<span class="meta-loc">' + ICONS.pin + esc(it.loc) + '</span>' : '') +
             '</div>' +
             (it.note ? '<div class="item-note">' + esc(it.note) + '</div>' : '') +
@@ -681,7 +803,10 @@
     $('fQty').value = item ? item.qty : 1;
     $('fUnit').value = item ? (item.unit||'') : '';
     $('fMin').value = item ? item.min : 1;
-    $('fCat').value = item ? (item.cat||'') : (filterCat !== 'All' ? filterCat : '');
+    var prefill = '';
+    if(item){ prefill = item.cat || ''; }
+    else if(view === 'list' && currentCat && currentCat !== UNSORTED){ prefill = currentCat; }
+    $('fCat').value = prefill;
     $('fLoc').value = item ? (item.loc||'') : '';
     $('fNote').value = item ? (item.note||'') : '';
     $('overlay').classList.add('open');
@@ -724,18 +849,17 @@
   $('btnCancel').addEventListener('click', closeSheet);
   $('overlay').addEventListener('click', closeSheet);
   $('btnSave').addEventListener('click', saveFromSheet);
+  $('backBtn').addEventListener('click', goHome);
 
   $('search').addEventListener('input', function(e){
     searchTerm = e.target.value;
-    renderList();
+    render();
   });
 
-  $('chips').addEventListener('click', function(e){
-    var b = e.target.closest('.chip');
-    if(!b) return;
-    filterCat = b.getAttribute('data-cat');
-    renderChips();
-    renderList();
+  $('catGrid').addEventListener('click', function(e){
+    var card = e.target.closest('.cat-card');
+    if(!card) return;
+    openCat(card.getAttribute('data-cat'));
   });
 
   $('list').addEventListener('click', function(e){
@@ -753,7 +877,13 @@
     else if(act === 'del'){
       if(confirm('Delete "' + it.name + '" from the database?')){
         items = items.filter(function(x){ return x.id !== id; });
-        save(); render();
+        save();
+        /* if sector is now empty, return home */
+        if(view === 'list' && currentCat && !items.some(function(x){ return catOf(x) === currentCat; })){
+          goHome();
+        } else {
+          render();
+        }
         toast('- DATA DELETED');
       }
     }
@@ -762,7 +892,8 @@
   $('resetBtn').addEventListener('click', function(){
     if(confirm('This will permanently erase ALL inventory data. Continue?')){
       items = [];
-      save(); render();
+      save();
+      goHome();
       toast('MEMORY WIPED');
     }
   });
