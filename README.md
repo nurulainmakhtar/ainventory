@@ -1,0 +1,2 @@
+# ainventory
+home stash
